@@ -3,16 +3,14 @@ import { SettingsDto } from "./settings.dto";
 
 export class UserDto {
   constructor(object: any) {
-    this.name = object.name;
-    this.surname = object.surname;
+    this.firstName = object.firstName;
+    this.lastName = object.lastName;
     this.email = object.email;
-    this.phone = object.phone;
-    this.birthdaydate = object.birthdaydate;
-
+    this.phoneNumber = object.phoneNumber;
   };
-  readonly name: string;
-  readonly surname: string;
+  readonly firstName: string;
+  readonly lastName: string;
   readonly email: string;
-  readonly phone: string;
-  readonly birthdaydate: Date;
+  readonly phoneNumber: string;
+
 }

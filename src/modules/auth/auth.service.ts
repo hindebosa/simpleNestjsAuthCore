@@ -8,6 +8,8 @@ import { ForgottenPassword } from './interfaces/forgottenpassword.interface';
 import { UserDto } from '../users/dto/user.dto';
 import { JWTService } from 'src/common/services/jwtService';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { User } from '../users/interfaces/user.interface';
 
 
 const saltRounds = 10;
@@ -37,34 +39,47 @@ export class AuthService {
 
   }
 
-  // async createNewUser(newUser: CreateUserDto): Promise<User> {
-  //   if (this.isValidEmail(newUser.email) && newUser.hash) {
-  //     var userRegistered = await this.findByEmail(newUser.email);
-  //     if (!userRegistered) {
-  //       console.log(newUser);
-  //       newUser.hash = await bcrypt.hash(newUser.hash, saltRounds);
-  //       const user = await this.prisma.user.create({
-  //         data: {
-  //           ...newUser,
-  //         },
-  //       });
+  isValidEmail(email: string) {
+    if (email) {
+      var re =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    } else return false;
+  }
 
-  //       return await user;
-  //     } else if (!userRegistered.validEmail) {
-  //       return userRegistered;
-  //     } else {
-  //       throw new HttpException(
-  //         'REGISTRATION.USER_ALREADY_REGISTERED',
-  //         HttpStatus.FORBIDDEN,
-  //       );
-  //     }
-  //   } else {
-  //     throw new HttpException(
-  //       'REGISTRATION.MISSING_MANDATORY_PARAMETERS',
-  //       HttpStatus.FORBIDDEN,
-  //     );
-  //   }
-  // }
+  async findByEmail(email: string): Promise<User> {
+    return await this.prisma.user.findUnique({ where: { email: email } });
+  }
+
+
+  async createNewUser(newUser: CreateUserDto): Promise<User> {
+    if (this.isValidEmail(newUser.email) && newUser.password) {
+      var userRegistered = await this.findByEmail(newUser.email);
+      if (!userRegistered) {
+        console.log(newUser);
+        newUser.password = await bcrypt.hash(newUser.password, saltRounds);
+        const user = await this.prisma.user.create({
+          data: {
+            ...newUser,
+          },
+        });
+
+        return await user;
+      } else if (!userRegistered.validEmail) {
+        return userRegistered;
+      } else {
+        throw new HttpException(
+          'REGISTRATION.USER_ALREADY_REGISTERED',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+    } else {
+      throw new HttpException(
+        'REGISTRATION.MISSING_MANDATORY_PARAMETERS',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+  }
 
   // async createEmailToken(email: string): Promise<boolean> {
   //   var emailVerification = await this.prisma.emailVerification.findUnique({
