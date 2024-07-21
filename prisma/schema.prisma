@@ -18,9 +18,9 @@ model User {
   firstName  String
   lastName String
   phoneNumber String
-  verified Boolean
+  verified Boolean?
   email String  @unique
-  validEmail Boolean
+  validEmail Boolean?
   password String
   images    Image[]
   createdAt  DateTime  @default(now())
