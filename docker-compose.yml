@@ -1,0 +1,12 @@
+version: '3'
+services:
+  db:
+    container_name: authBackend
+    image: postgres:13
+    ports:
+      - 5430:5432
+    environment:
+      POSTGRES_USER: hilton
+      POSTGRES_PASSWORD: nitrox14
+      POSTGRES_DB: auth
+
