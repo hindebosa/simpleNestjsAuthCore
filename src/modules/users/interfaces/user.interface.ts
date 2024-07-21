@@ -1,4 +1,3 @@
-
 export interface User {
     validEmail:boolean
     firstName:  string
